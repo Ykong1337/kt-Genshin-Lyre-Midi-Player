@@ -1,3 +1,3 @@
-# kt-Genshin-Lyre-Midi-Player
+# kt-Midi-Player
 
 ## try kt
