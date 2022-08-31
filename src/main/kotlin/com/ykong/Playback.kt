@@ -85,7 +85,10 @@ class Playback {
                 val data = midiEvent.message.message
                 tempo = (data[3].toInt().and(255).toLong()).shl(16)
                     .or((data[4].toInt().and(255).toLong()).shl(8).or(data[5].toInt().and(255).toLong()))
-            } else if (midiEvent.message is ShortMessage) {
+            } else if ((midiEvent.message is ShortMessage) && ((midiEvent.message as ShortMessage).command == 144) && (key.containsKey(
+                    (midiEvent.message as ShortMessage).data1
+                ))
+            ) {
                 time = (midiEvent.tick - tick) * (tempo / 1000.0 / resolution)
                 tick = midiEvent.tick
                 map["time"] = time
@@ -105,16 +108,12 @@ class Playback {
             inputTime += (msg["time"] as Double / speed)
             val playbackTime = System.currentTimeMillis() - startTime
 
-            val currentTime = (inputTime - playbackTime).toLong()
-
-            if (currentTime > 0) {
-                sleep(currentTime)
+            if (inputTime - playbackTime > 0) {
+                sleep((inputTime - playbackTime).toLong())
             }
 
-            if (msg["command"] as Int == 144 && key.containsKey(msg["data1"] as Int)) {
-                robot.keyPress(key[msg["data1"] as Int] as Int)
-                robot.keyRelease(key[msg["data1"] as Int] as Int)
-            }
+            robot.keyPress(key[msg["data1"] as Int] as Int)
+            robot.keyRelease(key[msg["data1"] as Int] as Int)
         }
     }
 }
