@@ -10,7 +10,6 @@ import kotlin.system.exitProcess
 fun main() {
 
     val playback = Playback()
-    playback.keyInit()
     val sc = Scanner(System.`in`)
     val speed: Double
     val sleep: Long
