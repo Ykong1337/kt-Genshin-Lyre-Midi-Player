@@ -40,9 +40,9 @@ class Playback {
                 val data = midiEvent.message.message
                 tempo = (data[3].toInt().and(255).toLong()).shl(16)
                     .or((data[4].toInt().and(255).toLong()).shl(8).or(data[5].toInt().and(255).toLong()))
-            } else if ((midiEvent.message is ShortMessage) && ((midiEvent.message as ShortMessage).command == 144) && (key.containsKey(
-                    (midiEvent.message as ShortMessage).data1
-                ))
+            } else if ((midiEvent.message is ShortMessage)
+                && ((midiEvent.message as ShortMessage).command == 144)
+                && (key.containsKey((midiEvent.message as ShortMessage).data1))
             ) {
                 time = (midiEvent.tick - tick) * (tempo / 1000.0 / resolution)
                 tick = midiEvent.tick
