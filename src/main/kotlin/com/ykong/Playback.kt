@@ -19,7 +19,6 @@ class Playback {
         val tracks = sequence.tracks
         val eventMessage = ArrayList<MidiEvent>()
         val message = ArrayList<HashMap<String, Any>>()
-        var map: HashMap<String, Any>
         var tempo = 500000L
         var tick = 0L
 
@@ -33,8 +32,7 @@ class Playback {
 
         for (midiEvent in eventMessage) {
 
-            var time: Double
-            map = JSON.parseObject(JSON.toJSONString(midiEvent.message)).toMap() as HashMap<String, Any>
+            val map = JSON.parseObject(JSON.toJSONString(midiEvent.message)).toMap() as HashMap<String, Any>
 
             if ((midiEvent.message is MetaMessage) && (midiEvent.message as MetaMessage).type == 81) {
                 val data = midiEvent.message.message
@@ -44,7 +42,7 @@ class Playback {
                 && ((midiEvent.message as ShortMessage).command == 144)
                 && (key.containsKey((midiEvent.message as ShortMessage).data1))
             ) {
-                time = (midiEvent.tick - tick) * (tempo / 1000.0 / resolution)
+                val time = (midiEvent.tick - tick) * (tempo / 1000.0 / resolution)
                 tick = midiEvent.tick
                 map["time"] = time
                 message.add(map)
@@ -62,9 +60,10 @@ class Playback {
 
             inputTime += (msg["time"] as Double / speed)
             val playbackTime = System.currentTimeMillis() - startTime
+            val currentTime = inputTime - playbackTime
 
-            if (inputTime - playbackTime > 0) {
-                sleep((inputTime - playbackTime).toLong())
+            if (currentTime > 0) {
+                sleep((currentTime).toLong())
             }
 
             robot.keyPress(key[msg["data1"] as Int] as Int)
